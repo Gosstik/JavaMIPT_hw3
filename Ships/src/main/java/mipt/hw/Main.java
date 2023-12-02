@@ -1,18 +1,18 @@
 package mipt.hw;
 
 import mipt.hw.Ship.ShipCapacity;
-import mipt.hw.Ship.ShipGenerator;
 import mipt.hw.Ship.ShipType;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.io.File;
 
 public class Main {
     public static void main(String[] args) {
-        CustomLogger.info("Main start");
-        CustomLogger.info("Available number of cores: " + Runtime.getRuntime().availableProcessors());
+        InitLogger();
+
+        CommonLogger.info("""
+        Main start
+        Available number of cores: %d
+        """.formatted(Runtime.getRuntime().availableProcessors()));
 
         Observer observer = new Observer();
 
@@ -22,10 +22,17 @@ public class Main {
 
         observer.setPriers(breadShipsCount, bananaShipsCount, clothesShipsCount);
 
-        observer.LaunchShips(ShipType.BREAD, ShipCapacity.SMALL, breadShipsCount);
-        observer.LaunchShips(ShipType.BANANA, ShipCapacity.SMALL, bananaShipsCount);
-        observer.LaunchShips(ShipType.CLOTHES, ShipCapacity.SMALL, clothesShipsCount);
+        observer.launchShips(ShipType.BREAD, ShipCapacity.SMALL, breadShipsCount);
+        observer.launchShips(ShipType.BANANA, ShipCapacity.SMALL, bananaShipsCount);
+        observer.launchShips(ShipType.CLOTHES, ShipCapacity.SMALL, clothesShipsCount);
 
-        observer.awaitProcess();
+        observer.waitIdle();
+    }
+
+    public static void InitLogger() {
+//        CommonLogger.addConsoleHandler();
+
+        String logFilename = CommonLogger.getLogsDirName() + "/CommonLogger.log";
+        CommonLogger.addFileHandler(new File(logFilename));
     }
 }

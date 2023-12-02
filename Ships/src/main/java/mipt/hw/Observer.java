@@ -43,14 +43,14 @@ public class Observer {
         }
     }
 
-    public void LaunchShips(ShipType type, ShipCapacity capacity, long count) {
+    public void launchShips(ShipType type, ShipCapacity capacity, long count) {
         for (long i = 0; i < count; ++i) {
             shipGenerator.CreateShip(type, capacity, piers.get(type), shipsNumCounter, tunnel);
             ++shipsNumCounter;
         }
     }
 
-    public void awaitProcess() {
+    public void waitIdle() {
         long timeout = 100;
         executorPool.shutdown();
         try {
@@ -59,7 +59,7 @@ public class Observer {
                 throw new RuntimeException("timeout in awaitProcess (" + timeout + " seconds)");
             }
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            InterruptedExceptionHandler.handle();
         }
     }
 

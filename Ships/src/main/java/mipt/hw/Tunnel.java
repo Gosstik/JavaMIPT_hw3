@@ -18,7 +18,7 @@ public class Tunnel {
                 isFull.await();
             }
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            InterruptedExceptionHandler.handle();
         }
         --shipsCount;
     }
@@ -29,7 +29,7 @@ public class Tunnel {
             Thread.sleep(SLEEP_MILLIS);
             ship.exitTunnelLog();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            InterruptedExceptionHandler.handle();
         }
     }
 

@@ -38,7 +38,7 @@ public class Pier implements Runnable {
             try {
                 wait();
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                InterruptedExceptionHandler.handle();
             }
         }
     }
@@ -48,16 +48,17 @@ public class Pier implements Runnable {
             Ship ship = queue.poll();
             loadShip(ship);
             --leftShipsToHandle;
-            ship.loadedLog(leftShipsToHandle);
+            ship.finishLoadingLog(leftShipsToHandle);
         }
     }
 
     private void loadShip(Ship ship) {
-        long timeToLoadMill = ship.getCapacity().getValue() * 100;
+        long timeToLoadMillis = ship.getCapacity().getValue() * 100;
+        ship.startLoadingLog();
         try {
-            Thread.sleep(timeToLoadMill);
+            Thread.sleep(timeToLoadMillis);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            InterruptedExceptionHandler.handle();
         }
     }
 

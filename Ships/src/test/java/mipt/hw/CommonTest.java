@@ -2,21 +2,41 @@ package mipt.hw;
 
 import mipt.hw.Ship.ShipCapacity;
 import mipt.hw.Ship.ShipType;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.TestMethodOrder;
 
+import java.io.File;
+
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CommonTest {
+
+    public static void InitLogger() {
+        CommonLogger.removeHandlers();
+
+        final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
+        final String methodName = ste[2].getMethodName();
+
+        String logFilename = CommonLogger.getLogsDirName() + "/CommonLogger_" + methodName + ".log";
+        CommonLogger.addFileHandler(new File(logFilename));
+    }
+
     @Test
+    @Order(1)
     public void OneShip() {
+        InitLogger();
+
         Observer observer = new Observer();
 
         long breadShipsCount = 1;
 
         observer.setPriers(breadShipsCount, 0, 0);
 
-        observer.LaunchShips(ShipType.BREAD, ShipCapacity.SMALL, breadShipsCount);
+        observer.launchShips(ShipType.BREAD, ShipCapacity.SMALL, breadShipsCount);
 
-        observer.awaitProcess();
+        observer.waitIdle();
 
         for (Pier pier: observer.piers.values()) {
             Assertions.assertEquals(0, pier.getLeftShipsToHandle());
@@ -24,7 +44,10 @@ public class CommonTest {
     }
 
     @Test
+    @Order(2)
     public void AllTypesShips() {
+        InitLogger();
+
         Observer observer = new Observer();
 
         long breadShipsCount = 1;
@@ -33,11 +56,11 @@ public class CommonTest {
 
         observer.setPriers(breadShipsCount, bananaShipsCount, clothesShipsCount);
 
-        observer.LaunchShips(ShipType.BREAD, ShipCapacity.SMALL, breadShipsCount);
-        observer.LaunchShips(ShipType.BANANA, ShipCapacity.SMALL, bananaShipsCount);
-        observer.LaunchShips(ShipType.CLOTHES, ShipCapacity.SMALL, clothesShipsCount);
+        observer.launchShips(ShipType.BREAD, ShipCapacity.SMALL, breadShipsCount);
+        observer.launchShips(ShipType.BANANA, ShipCapacity.SMALL, bananaShipsCount);
+        observer.launchShips(ShipType.CLOTHES, ShipCapacity.SMALL, clothesShipsCount);
 
-        observer.awaitProcess();
+        observer.waitIdle();
 
         for (Pier pier: observer.piers.values()) {
             Assertions.assertEquals(0, pier.getLeftShipsToHandle());
@@ -45,7 +68,10 @@ public class CommonTest {
     }
 
     @Test
+    @Order(3)
     public void AllCapacitiesOfShips() {
+        InitLogger();
+
         Observer observer = new Observer();
 
         long small = 1;
@@ -55,11 +81,11 @@ public class CommonTest {
 
         observer.setPriers(breadShipsCount, 0, 0);
 
-        observer.LaunchShips(ShipType.BREAD, ShipCapacity.SMALL, small);
-        observer.LaunchShips(ShipType.BREAD, ShipCapacity.MEDIUM, medium);
-        observer.LaunchShips(ShipType.BREAD, ShipCapacity.LARGE, large);
+        observer.launchShips(ShipType.BREAD, ShipCapacity.SMALL, small);
+        observer.launchShips(ShipType.BREAD, ShipCapacity.MEDIUM, medium);
+        observer.launchShips(ShipType.BREAD, ShipCapacity.LARGE, large);
 
-        observer.awaitProcess();
+        observer.waitIdle();
 
         for (Pier pier: observer.piers.values()) {
             Assertions.assertEquals(0, pier.getLeftShipsToHandle());
@@ -67,7 +93,10 @@ public class CommonTest {
     }
 
     @Test
+    @Order(4)
     public void MoreThenFiveShips() {
+        InitLogger();
+
         Observer observer = new Observer();
 
         long breadShipsCount = 10;
@@ -76,11 +105,35 @@ public class CommonTest {
 
         observer.setPriers(breadShipsCount, bananaShipsCount, clothesShipsCount);
 
-        observer.LaunchShips(ShipType.BREAD, ShipCapacity.SMALL, breadShipsCount);
-        observer.LaunchShips(ShipType.BANANA, ShipCapacity.SMALL, bananaShipsCount);
-        observer.LaunchShips(ShipType.CLOTHES, ShipCapacity.SMALL, clothesShipsCount);
+        observer.launchShips(ShipType.BREAD, ShipCapacity.SMALL, breadShipsCount);
+        observer.launchShips(ShipType.BANANA, ShipCapacity.SMALL, bananaShipsCount);
+        observer.launchShips(ShipType.CLOTHES, ShipCapacity.SMALL, clothesShipsCount);
 
-        observer.awaitProcess();
+        observer.waitIdle();
+
+        for (Pier pier: observer.piers.values()) {
+            Assertions.assertEquals(0, pier.getLeftShipsToHandle());
+        }
+    }
+
+    @Test
+    @Order(5)
+    public void Stress() {
+        InitLogger();
+
+        Observer observer = new Observer();
+
+        long breadShipsCount = 22;
+        long bananaShipsCount = 22;
+        long clothesShipsCount = 22;
+
+        observer.setPriers(breadShipsCount, bananaShipsCount, clothesShipsCount);
+
+        observer.launchShips(ShipType.BREAD, ShipCapacity.SMALL, breadShipsCount);
+        observer.launchShips(ShipType.BANANA, ShipCapacity.SMALL, bananaShipsCount);
+        observer.launchShips(ShipType.CLOTHES, ShipCapacity.SMALL, clothesShipsCount);
+
+        observer.waitIdle();
 
         for (Pier pier: observer.piers.values()) {
             Assertions.assertEquals(0, pier.getLeftShipsToHandle());

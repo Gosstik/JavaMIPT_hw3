@@ -44,3 +44,4 @@ bin/
 ### Misc ###
 gradlew
 gradlew.bat
+/logs/
