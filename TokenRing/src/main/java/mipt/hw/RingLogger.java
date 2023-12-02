@@ -34,6 +34,10 @@ public class RingLogger {
         return LOGS_DIRECTORY_NAME;
     }
 
+    public static void removeHandlers() {
+        LOGGER.setUseParentHandlers(false);
+    }
+
     public static void addFileHandler(File file) {
         Handler fh = null;
         try {
